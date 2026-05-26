@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Student Report — ProctorAI{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="admin-wrapper">
+    <a href="{{ url_for('admin.dashboard') }}" class="back-btn">← Back to Dashboard</a>
+
+    <h1>📋 Student Report</h1>
+    <h3>Session #{{ exam_sess.id }} — Exam Score: {{ exam_sess.score }} | Cheating Score:
+        <span style="color:{{ risk[1] }}">{{ exam_sess.cheating_score }} ({{ risk[0] }})</span>
+    </h3>
+
+    <!-- Violation Breakdown -->
+    <div class="report-section">
+        <h2>Violations by Type</h2>
+        <div class="vbar-chart">
+            {% set score_map = {
+                "TAB_SWITCH": 20, "WINDOW_BLUR": 20,
+                "NO_FACE": 25, "MULTIPLE_FACES": 70,
+                "LOOKING_AWAY": 10, "MOBILE_DETECTED": 50,
+                "AUDIO_DETECTED": 10
+            } %}
+            {% for vtype, count in v_counts.items() %}
+            <div class="vbar-row">
+                <div class="vbar-label">{{ vtype }}</div>
+                <div class="vbar-track">
+                    <div class="vbar-fill" style="width: {{ [count * 20, 100]|min }}%"></div>
+                </div>
+                <div class="vbar-count">{{ count }}x</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Full Violation Log -->
+    <div class="report-section">
+        <h2>Full Violation Log</h2>
+        <table class="admin-table">
+            <thead>
+                <tr><th>Time</th><th>Type</th><th>Description</th><th>Points</th></tr>
+            </thead>
+            <tbody>
+            {% for v in violations %}
+            <tr>
+                <td>{{ v.timestamp }}</td>
+                <td><span class="vbadge">{{ v.violation_type }}</span></td>
+                <td>{{ v.description }}</td>
+                <td>+{{ v.points }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Answers -->
+    <div class="report-section">
+        <h2>Answer Sheet</h2>
+        {% set ans_map = {} %}
+        {% for a in answers %}{% set _ = ans_map.update({a.question_id: a}) %}{% endfor %}
+        {% for q in questions %}
+        {% set a = ans_map.get(q.id) %}
+        <div class="answer-row {% if a and a.is_correct %}correct{% elif a %}wrong{% else %}skipped{% endif %}">
+            <div class="ar-q">Q{{ loop.index }}: {{ q.question }}</div>
+            <div class="ar-a">
+                Given: <strong>{{ a.answer if a else "Not answered" }}</strong>
+                {% if a and not a.is_correct %} | Correct: <strong>{{ q.answer }}</strong>{% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

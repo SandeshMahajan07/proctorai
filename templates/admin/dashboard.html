@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard — ProctorAI{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="admin-wrapper">
+    <h1>🛡️ Admin Dashboard</h1>
+
+    <!-- Stats Row -->
+    <div class="admin-stats">
+        <div class="stat-card">
+            <div class="stat-val">{{ total_exams }}</div>
+            <div class="stat-lbl">Total Exams</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-val">{{ avg_cheat_score }}</div>
+            <div class="stat-lbl">Avg Cheating Score</div>
+        </div>
+        <div class="stat-card danger">
+            <div class="stat-val">{{ high_risk }}</div>
+            <div class="stat-lbl">High Risk Students</div>
+        </div>
+    </div>
+
+    <!-- Sessions Table -->
+    <div class="admin-table-wrap">
+        <h2>All Exam Sessions</h2>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>#</th><th>Student</th><th>Started</th><th>Status</th>
+                    <th>Score</th><th>Cheat Score</th><th>Risk</th><th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for s in sessions %}
+            {% if s.cheating_score == 0 %}
+                {% set risk_color = "#22c55e" %}{% set risk_label = "Clean" %}
+            {% elif s.cheating_score < 100 %}
+                {% set risk_color = "#f59e0b" %}{% set risk_label = "Medium" %}
+            {% elif s.cheating_score < 200 %}
+                {% set risk_color = "#ef4444" %}{% set risk_label = "High" %}
+            {% else %}
+                {% set risk_color = "#7f1d1d" %}{% set risk_label = "Very High" %}
+            {% endif %}
+            <tr>
+                <td>{{ s.id }}</td>
+                <td><strong>{{ s.username }}</strong></td>
+                <td>{{ s.started_at }}</td>
+                <td><span class="badge-status {{ s.status }}">{{ s.status }}</span></td>
+                <td>{{ s.score }}</td>
+                <td><strong>{{ s.cheating_score }}</strong></td>
+                <td><span class="risk-label" style="color: {{ risk_color }}">{{ risk_label }}</span></td>
+                <td>
+                    <a href="{{ url_for('admin.student_report', session_id=s.id) }}"
+                       class="btn-view">View Report</a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

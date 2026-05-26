@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Environment
+.env
+.venv
+venv/
+env/
+
+# Flask sessions (runtime data)
+flask_sessions/
+
+# Database (runtime data — Render uses ephemeral disk)
+database/proctor.db
+
+# Large model files — download via build script instead
+ai_modules/lbfmodel.yaml
+ai_modules/face_landmarker.task
+ai_modules/blaze_face_short_range.tflite
+
+# YOLO cache
+runs/
+*.pt
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: proctorai
+    runtime: python
+    buildCommand: bash build.sh
+    startCommand: gunicorn "app:create_app()" --bind 0.0.0.0:$PORT --workers 1 --timeout 120
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: SECRET_KEY
+        value: change_this_in_render_dashboard

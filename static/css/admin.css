@@ -1,0 +1,73 @@
+/* ─── Admin Styles ───────────────────────────────────────────────────────────── */
+.admin-wrapper { max-width: 1100px; margin: 0 auto; }
+.admin-wrapper h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 1.5rem; }
+
+.admin-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+.stat-card {
+    background: #1a1d27;
+    border: 1px solid #2e3350;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+}
+.stat-card.danger { border-color: #ef444422; }
+.stat-val { font-size: 2.5rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: #4f8ef7; }
+.stat-lbl { color: #7b82a8; font-size: 0.85rem; margin-top: 0.3rem; }
+
+.admin-table-wrap { background: #1a1d27; border: 1px solid #2e3350; border-radius: 12px; padding: 1.5rem; }
+.admin-table-wrap h2 { margin-bottom: 1rem; font-size: 1.1rem; }
+
+.admin-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.admin-table th {
+    text-align: left;
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid #2e3350;
+    color: #7b82a8;
+    font-weight: 500;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.admin-table td { padding: 0.75rem; border-bottom: 1px solid #2e335022; }
+.admin-table tr:hover td { background: #22263a; }
+
+.badge-status {
+    padding: 2px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;
+}
+.badge-status.ongoing   { background:#1d4ed822; color:#60a5fa; border:1px solid #1d4ed844; }
+.badge-status.completed { background:#16a34a22; color:#4ade80; border:1px solid #16a34a44; }
+
+.btn-view {
+    background: #22263a; border: 1px solid #2e3350;
+    color: #e8eaf6; padding: 4px 12px; border-radius: 6px;
+    font-size: 0.8rem; text-decoration: none; transition: all 0.2s;
+}
+.btn-view:hover { border-color: #4f8ef7; color: #4f8ef7; }
+
+.risk-label { font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+
+/* Report page */
+.report-section {
+    background: #1a1d27; border: 1px solid #2e3350;
+    border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;
+}
+.report-section h2 { font-size: 1.1rem; margin-bottom: 1rem; }
+
+.vbar-chart { display: flex; flex-direction: column; gap: 0.75rem; }
+.vbar-row   { display: flex; align-items: center; gap: 1rem; }
+.vbar-label { min-width: 150px; font-size: 0.8rem; font-family: 'JetBrains Mono', monospace; color: #f59e0b; }
+.vbar-track { flex: 1; background: #0f1117; border-radius: 4px; height: 8px; overflow: hidden; }
+.vbar-fill  { height: 100%; background: linear-gradient(90deg, #4f8ef7, #ef4444); border-radius: 4px; transition: width 0.5s; }
+.vbar-count { min-width: 40px; font-size: 0.85rem; font-weight: 700; text-align: right; }
+
+.back-btn {
+    display: inline-block; color: #7b82a8; text-decoration: none;
+    margin-bottom: 1.5rem; font-size: 0.9rem;
+    transition: color 0.2s;
+}
+.back-btn:hover { color: #4f8ef7; }

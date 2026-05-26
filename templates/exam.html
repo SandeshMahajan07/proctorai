@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block title %}Exam — ProctorAI{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/exam.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="exam-layout">
+
+    <!-- ─── Left Panel: Webcam + Status ─────────────────────────────── -->
+    <div class="exam-sidebar">
+        <div class="webcam-panel">
+            <div class="webcam-header">
+                <span class="live-dot"></span> Live Monitoring
+            </div>
+            <video id="webcamFeed" autoplay muted playsinline></video>
+            <canvas id="webcamCanvas" style="display:none;"></canvas>
+
+            <div class="monitor-status" id="monitorStatus">
+                <div class="status-item" id="statusFace">
+                    <span class="status-icon">👤</span>
+                    <span class="status-text">Face: Detecting...</span>
+                </div>
+                <div class="status-item" id="statusGaze">
+                    <span class="status-icon">👁️</span>
+                    <span class="status-text">Gaze: OK</span>
+                </div>
+                <div class="status-item" id="statusTab">
+                    <span class="status-icon">🖥️</span>
+                    <span class="status-text">Tab: Active</span>
+                </div>
+                <div class="status-item" id="statusAudio">
+                    <span class="status-icon">🔊</span>
+                    <span class="status-text">Audio: Normal</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cheating Score Display -->
+        <div class="cheat-score-panel">
+            <div class="score-label">Suspicion Score</div>
+            <div class="score-value" id="cheatScore">0</div>
+            <div class="score-bar-wrap">
+                <div class="score-bar" id="cheatScoreBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── Main: Exam Questions ─────────────────────────────────────── -->
+    <div class="exam-main">
+        <!-- Timer -->
+        <div class="exam-topbar">
+            <div class="exam-title">Online Examination</div>
+            <div class="timer-box" id="timerBox">
+                <span class="timer-icon">⏱️</span>
+                <span id="timerDisplay">30:00</span>
+            </div>
+        </div>
+
+        <!-- Progress -->
+        <div class="progress-bar-wrap">
+            <div class="progress-bar" id="progressBar"></div>
+            <span id="progressText">Question 1 of {{ questions|length }}</span>
+        </div>
+
+        <!-- Question Card -->
+        <div class="question-container" id="questionContainer">
+            {% for q in questions %}
+            <div class="question-card {% if loop.index == 1 %}active{% endif %}"
+                 id="question-{{ q.id }}" data-qid="{{ q.id }}">
+                <div class="question-number">Question {{ loop.index }}</div>
+                <div class="question-text">{{ q.question }}</div>
+                <div class="options-list">
+                    {% for option in q.options %}
+                    <label class="option-label">
+                        <input type="radio"
+                               name="q{{ q.id }}"
+                               value="{{ option }}"
+                               class="option-radio"
+                               data-qid="{{ q.id }}">
+                        <span class="option-text">{{ option }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Navigation -->
+        <div class="exam-nav">
+            <button class="btn-nav" id="btnPrev" onclick="changeQuestion(-1)" disabled>
+                ← Previous
+            </button>
+            <div class="question-dots" id="questionDots">
+                {% for q in questions %}
+                <div class="q-dot {% if loop.index == 1 %}active{% endif %}"
+                     data-idx="{{ loop.index0 }}"
+                     onclick="goToQuestion({{ loop.index0 }})">{{ loop.index }}</div>
+                {% endfor %}
+            </div>
+            <button class="btn-nav" id="btnNext" onclick="changeQuestion(1)">
+                Next →
+            </button>
+        </div>
+
+        <button class="btn-submit" id="btnSubmit" onclick="submitExam()">
+            ✅ Submit Exam
+        </button>
+    </div>
+</div>
+
+<!-- ─── Warning Overlay ──────────────────────────────────────────────── -->
+<div class="warning-overlay" id="warningOverlay" style="display:none;">
+    <div class="warning-card">
+        <div class="warning-icon">⚠️</div>
+        <div class="warning-title">Suspicious Activity Detected!</div>
+        <div class="warning-msg" id="warningMsg">Please look at the screen.</div>
+        <button class="btn-primary" onclick="dismissWarning()">I Understand</button>
+    </div>
+</div>
+
+<!-- Hidden data -->
+<input type="hidden" id="sessionId" value="{{ session_id }}">
+<input type="hidden" id="totalQuestions" value="{{ questions|length }}">
+<input type="hidden" id="examDuration" value="{{ duration }}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/webcam.js') }}"></script>
+<script src="{{ url_for('static', filename='js/screen_monitor.js') }}"></script>
+<script src="{{ url_for('static', filename='js/audio_monitor.js') }}"></script>
+<script src="{{ url_for('static', filename='js/exam.js') }}"></script>
+{% endblock %}

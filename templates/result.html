@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Result — ProctorAI{% endblock %}
+
+{% block content %}
+<div class="result-wrapper">
+    <div class="result-header">
+        <h1>📊 Exam Report</h1>
+        <p>Session #{{ exam_sess.id }} — {{ exam_sess.started_at }}</p>
+    </div>
+
+    <!-- Score Cards -->
+    <div class="result-cards">
+        <div class="result-card card-blue">
+            <div class="rc-icon">📝</div>
+            <div class="rc-value">{{ exam_sess.score }} / {{ total_questions }}</div>
+            <div class="rc-label">Exam Score</div>
+        </div>
+        <div class="result-card card-red">
+            <div class="rc-icon">🚨</div>
+            <div class="rc-value">{{ exam_sess.cheating_score }}</div>
+            <div class="rc-label">Cheating Score</div>
+        </div>
+        <div class="result-card" style="border-color: {{ risk[1] }}">
+            <div class="rc-icon">⚠️</div>
+            <div class="rc-value" style="color:{{ risk[1] }}">{{ risk[0] }}</div>
+            <div class="rc-label">Risk Level</div>
+        </div>
+        <div class="result-card card-green">
+            <div class="rc-icon">📋</div>
+            <div class="rc-value">{{ violations|length }}</div>
+            <div class="rc-label">Total Violations</div>
+        </div>
+    </div>
+
+    <!-- Violation Breakdown -->
+    <div class="result-section">
+        <h2>Violation Summary</h2>
+        {% if violation_summary %}
+        <table class="violation-table">
+            <thead>
+                <tr><th>Violation Type</th><th>Count</th><th>Points Each</th><th>Total Points</th></tr>
+            </thead>
+            <tbody>
+                {% set score_map = {
+                    "TAB_SWITCH": 20, "WINDOW_BLUR": 20,
+                    "NO_FACE": 25, "MULTIPLE_FACES": 70,
+                    "LOOKING_AWAY": 10, "MOBILE_DETECTED": 50,
+                    "AUDIO_DETECTED": 10
+                } %}
+                {% for vtype, count in violation_summary.items() %}
+                <tr>
+                    <td><span class="vbadge">{{ vtype }}</span></td>
+                    <td>{{ count }}</td>
+                    <td>{{ score_map.get(vtype, 5) }}</td>
+                    <td>{{ count * score_map.get(vtype, 5) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="empty-msg">✅ No violations recorded. Clean exam!</p>
+        {% endif %}
+    </div>
+
+    <!-- Violation Timeline -->
+    {% if violations %}
+    <div class="result-section">
+        <h2>Violation Timeline</h2>
+        <div class="timeline">
+            {% for v in violations %}
+            <div class="timeline-item">
+                <div class="tl-time">{{ v.timestamp }}</div>
+                <div class="tl-dot"></div>
+                <div class="tl-content">
+                    <span class="vbadge">{{ v.violation_type }}</span>
+                    <span class="tl-desc">{{ v.description }}</span>
+                    <span class="tl-pts">+{{ v.points }} pts</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Answers Review -->
+    <div class="result-section">
+        <h2>Answer Review</h2>
+        {% set ans_map = {} %}
+        {% for a in answers %}{% set _ = ans_map.update({a.question_id: a}) %}{% endfor %}
+        {% for q in questions %}
+        {% set a = ans_map.get(q.id) %}
+        <div class="answer-row {% if a and a.is_correct %}correct{% elif a %}wrong{% else %}skipped{% endif %}">
+            <div class="ar-q">Q{{ loop.index }}: {{ q.question }}</div>
+            <div class="ar-a">
+                Your answer: <strong>{{ a.answer if a else "Not answered" }}</strong>
+                {% if a and not a.is_correct %} | Correct: <strong>{{ q.answer }}</strong>{% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <a href="{{ url_for('exam.exam_page') }}" class="btn-primary">🔄 Take Again</a>
+</div>
+{% endblock %}

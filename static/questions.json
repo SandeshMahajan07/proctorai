@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "question": "What does CPU stand for?",
+    "options": ["Central Processing Unit", "Computer Personal Unit", "Central Program Unit", "Control Processing Unit"],
+    "answer": "Central Processing Unit"
+  },
+  {
+    "id": 2,
+    "question": "Which language is primarily used for web styling?",
+    "options": ["HTML", "Python", "CSS", "Java"],
+    "answer": "CSS"
+  },
+  {
+    "id": 3,
+    "question": "What is the time complexity of binary search?",
+    "options": ["O(n)", "O(log n)", "O(n²)", "O(1)"],
+    "answer": "O(log n)"
+  },
+  {
+    "id": 4,
+    "question": "Which data structure uses LIFO order?",
+    "options": ["Queue", "Array", "Stack", "Linked List"],
+    "answer": "Stack"
+  },
+  {
+    "id": 5,
+    "question": "What does RAM stand for?",
+    "options": ["Read Access Memory", "Random Access Memory", "Run Active Memory", "Remote Access Module"],
+    "answer": "Random Access Memory"
+  },
+  {
+    "id": 6,
+    "question": "Which protocol is used to send emails?",
+    "options": ["FTP", "HTTP", "SMTP", "SSH"],
+    "answer": "SMTP"
+  },
+  {
+    "id": 7,
+    "question": "In Python, which keyword is used to define a function?",
+    "options": ["func", "def", "function", "lambda"],
+    "answer": "def"
+  },
+  {
+    "id": 8,
+    "question": "What is the binary representation of decimal 10?",
+    "options": ["1010", "1001", "1100", "1110"],
+    "answer": "1010"
+  },
+  {
+    "id": 9,
+    "question": "Which sorting algorithm has best average complexity O(n log n)?",
+    "options": ["Bubble Sort", "Insertion Sort", "Merge Sort", "Selection Sort"],
+    "answer": "Merge Sort"
+  },
+  {
+    "id": 10,
+    "question": "What does SQL stand for?",
+    "options": ["Structured Query Language", "Simple Query Logic", "Structured Queue List", "System Query Language"],
+    "answer": "Structured Query Language"
+  }
+]

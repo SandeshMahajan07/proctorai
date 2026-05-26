@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Login — ProctorAI{% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+    <div class="login-card">
+        <div class="login-header">
+            <div class="login-icon">🛡️</div>
+            <h1>ProctorAI</h1>
+            <p>AI-Powered Exam Proctoring System</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('auth.login') }}" class="login-form">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username"
+                       placeholder="Enter username" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password"
+                       placeholder="Enter password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn-primary btn-full">
+                Sign In →
+            </button>
+        </form>
+
+        <div class="login-demo">
+            <p class="demo-title">Demo Credentials</p>
+            <div class="demo-creds">
+                <div class="cred-row">
+                    <span class="role-badge role-admin">admin</span>
+                    <code>admin / admin123</code>
+                </div>
+                <div class="cred-row">
+                    <span class="role-badge role-student">student</span>
+                    <code>student1 / student123</code>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
