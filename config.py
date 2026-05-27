@@ -25,4 +25,4 @@ HEAD_POSE_PITCH_THRESH  = 20
 AUDIO_THRESHOLD         = 500
 
 # ─── Exam ─────────────────────────────────────────────────────────────────────
-EXAM_DURATION_SECONDS   = 1800
+EXAM_DURATION_SECONDS   = 600
