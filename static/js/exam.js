@@ -5,12 +5,12 @@
  */
 
 // ─── State ─────────────────────────────────────────────────────────────────────
-let currentQuestion  = 0;
-let answers          = {};          // { question_id: selected_answer }
-let cheatScore       = 0;
-let timerInterval    = null;
-let questionTimeLeft = 60;          // 60 seconds per question
-const totalQ         = parseInt(document.getElementById('totalQuestions')?.value || 10);
+let currentQuestion = 0;
+let answers         = {};          // { question_id: selected_answer }
+let cheatScore      = 0;
+let timerInterval   = null;
+let timeLeft        = parseInt(document.getElementById('examDuration')?.value || 1800);
+const totalQ        = parseInt(document.getElementById('totalQuestions')?.value || 10);
 
 // ─── ExamManager (shared interface) ───────────────────────────────────────────
 const ExamManager = {
@@ -22,13 +22,18 @@ const ExamManager = {
 
 // ─── Init ──────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+    // Start all monitors
     WebcamMonitor.start();
     ScreenMonitor.init();
     AudioMonitor.start();
 
+    // Request fullscreen for anti-cheat
     requestFullscreenMode();
-    startQuestionTimer();
 
+    // Start timer
+    startTimer();
+
+    // Listen for radio changes
     document.querySelectorAll('.option-radio').forEach(radio => {
         radio.addEventListener('change', (e) => {
             const qid = parseInt(e.target.dataset.qid);
@@ -46,46 +51,29 @@ function requestFullscreenMode() {
     if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
 }
 
-// ─── Per-Question Timer ────────────────────────────────────────────────────────
-function startQuestionTimer() {
-    clearInterval(timerInterval);
-    questionTimeLeft = 60;
-    updateTimerDisplay();
-
+// ─── Timer ────────────────────────────────────────────────────────────────────
+function startTimer() {
     timerInterval = setInterval(() => {
-        questionTimeLeft--;
+        timeLeft--;
         updateTimerDisplay();
-        if (questionTimeLeft <= 0) {
+        if (timeLeft <= 0) {
             clearInterval(timerInterval);
-            onQuestionTimeUp();
+            autoSubmit();
         }
     }, 1000);
 }
 
-function onQuestionTimeUp() {
-    // If there's a next question, auto-advance; otherwise auto-submit
-    if (currentQuestion < totalQ - 1) {
-        showWarning(`⏰ Time's up for question ${currentQuestion + 1}! Moving to next...`);
-        setTimeout(() => {
-            goToQuestion(currentQuestion + 1);
-            startQuestionTimer();
-        }, 1000);
-    } else {
-        autoSubmit();
-    }
-}
-
 function updateTimerDisplay() {
-    const secs = questionTimeLeft;
-    const el   = document.getElementById('timerDisplay');
-    const box  = document.getElementById('timerBox');
+    const mins   = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+    const secs   = (timeLeft % 60).toString().padStart(2, '0');
+    const el     = document.getElementById('timerDisplay');
+    const box    = document.getElementById('timerBox');
     if (!el) return;
-
-    el.textContent = `00:${secs.toString().padStart(2, '0')}`;
+    el.textContent = `${mins}:${secs}`;
 
     box.className = 'timer-box';
-    if (secs <= 10)      box.classList.add('danger');
-    else if (secs <= 30) box.classList.add('warning');
+    if (timeLeft <= 60)       box.classList.add('danger');
+    else if (timeLeft <= 300) box.classList.add('warning');
 }
 
 // ─── Question Navigation ───────────────────────────────────────────────────────
@@ -93,10 +81,10 @@ function changeQuestion(delta) {
     const next = currentQuestion + delta;
     if (next < 0 || next >= totalQ) return;
     goToQuestion(next);
-    startQuestionTimer();   // reset timer on manual navigation too
 }
 
 function goToQuestion(idx) {
+    // Hide current
     const cards = document.querySelectorAll('.question-card');
     const dots  = document.querySelectorAll('.q-dot');
 
@@ -108,6 +96,7 @@ function goToQuestion(idx) {
     if (cards[currentQuestion]) cards[currentQuestion].classList.add('active');
     if (dots[currentQuestion])  dots[currentQuestion].classList.add('active');
 
+    // Update nav buttons
     document.getElementById('btnPrev').disabled = (currentQuestion === 0);
     document.getElementById('btnNext').disabled = (currentQuestion === totalQ - 1);
 
@@ -134,11 +123,13 @@ function updateCheatScoreUI() {
 
     el.textContent = cheatScore;
 
+    // Color thresholds
     if (cheatScore === 0)       el.style.color = '#22c55e';
     else if (cheatScore < 100)  el.style.color = '#f59e0b';
     else if (cheatScore < 200)  el.style.color = '#ef4444';
     else                        el.style.color = '#7f1d1d';
 
+    // Bar width (cap at 100%)
     const barPct = Math.min((cheatScore / 300) * 100, 100);
     bar.style.width = `${barPct}%`;
 }
